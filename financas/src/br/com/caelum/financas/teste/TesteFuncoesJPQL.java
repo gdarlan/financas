@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import br.com.caelum.financas.dao.MovimentacaoDao;
 import br.com.caelum.financas.modelo.Conta;
 import br.com.caelum.financas.modelo.Movimentacao;
 import br.com.caelum.financas.modelo.TipoMovimentacao;
@@ -22,19 +23,17 @@ public class TesteFuncoesJPQL {
 		Conta conta = new Conta();
 		conta.setId(2);
 
-		String jqpl = "select avg(m.valor) from Movimentacao m where m.conta = :pConta" + " and m.tipo = :pTipo"
-				+ " group by day(m.data), month(m.data), year(m.data)";
-
-		TypedQuery<Double> query = em.createQuery(jqpl, Double.class);
+		TypedQuery<Double> typedQuery = em.createNamedQuery("MediasPorDiaETipo", Double.class);
 		
-		query.setParameter("pConta", conta);
-		query.setParameter("pTipo", TipoMovimentacao.SAIDA);
-
-		List<Double> medias = (List<Double>) query.getResultList();
-
+		typedQuery.setParameter("pConta", conta);
+		typedQuery.setParameter("pTipo", TipoMovimentacao.SAIDA);
 		
-		System.out.println("A media do dia 26 : " + medias.get(0));
-		System.out.println("A media do dia 27 : " + medias.get(1));
+		List<Double> medias = typedQuery.getResultList();
+
+		for (Double media : medias) {
+			System.out.println("A média é: " + media);
+		}
+
 		em.getTransaction().commit();
 		em.close();
 	}
