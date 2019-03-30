@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import br.com.caelum.financas.modelo.Conta;
 import br.com.caelum.financas.modelo.Movimentacao;
@@ -22,16 +23,18 @@ public class TesteFuncoesJPQL {
 		conta.setId(2);
 
 		String jqpl = "select avg(m.valor) from Movimentacao m where m.conta = :pConta" + " and m.tipo = :pTipo"
-				+ " order by m.valor desc";
+				+ " group by day(m.data), month(m.data), year(m.data)";
 
-		Query query = em.createQuery(jqpl);
+		TypedQuery<Double> query = em.createQuery(jqpl, Double.class);
+		
 		query.setParameter("pConta", conta);
 		query.setParameter("pTipo", TipoMovimentacao.SAIDA);
 
-		Double media = (Double) query.getSingleResult();
+		List<Double> medias = (List<Double>) query.getResultList();
 
-		System.out.println("A media é: " + media);
-
+		
+		System.out.println("A media do dia 26 : " + medias.get(0));
+		System.out.println("A media do dia 27 : " + medias.get(1));
 		em.getTransaction().commit();
 		em.close();
 	}
