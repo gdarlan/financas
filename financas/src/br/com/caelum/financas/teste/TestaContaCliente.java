@@ -8,5 +8,6 @@ public class TestaContaCliente {
 		Cliente cliente=new Cliente();
 		cliente.setNome("Gabrie");
 		cliente.setEndereco("rua nena");
+		System.out.println("Teste de pull");
 	}
 }
